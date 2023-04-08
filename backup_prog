@@ -1,0 +1,30 @@
+#!/bin/bash
+while [ -n "$1" ]
+  do
+    case "$1" in
+      --input_folder) input_folder=$2;;
+      --extension) extension=$2;;
+      --backup_folder) backup_folder=$2;;
+      --backup_archive_name) backup_archive_name=$2;;
+    esac
+    shift 2
+  done
+
+
+mkdir $backup_folder
+
+number=1
+
+for file in $(find $input_folder -type f -name *.$extension);
+do
+    cp $file ./$backup_folder/
+    name_of_file=$(basename ${file})
+    mv -- "./$backup_folder/$name_of_file" "./$backup_folder/${name_of_file%.$extension}$number.$extension"
+    number=$((number+1))
+done
+
+tar -czf $backup_archive_name ./$backup_folder
+
+
+
+echo done
